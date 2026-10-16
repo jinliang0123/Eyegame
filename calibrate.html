@@ -1,0 +1,66 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>眼動校正</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body class="stage">
+<canvas id="stage"></canvas>
+
+<div class="errbar" id="errbar">
+  <div class="top"><span>校正誤差</span><span><b id="errText">—</b></span></div>
+  <div class="track"><div class="fill" id="errFill"></div><div class="tick" id="errTick"></div></div>
+  <div class="scale"><span>0</span><span id="errMax"></span></div>
+</div>
+
+<div class="panel" id="panel">
+  <h2>🎯 眼動校正 <a href="index.html" style="font-size:12px;float:right">← 首頁</a></h2>
+  <div class="seg" id="modeSeg">
+    <button data-m="point" class="on">定點校正</button>
+    <button data-m="traj">軌跡校正</button>
+  </div>
+  <label class="row">圓球直徑 <input type="range" id="dia" min="24" max="160" value="60"><b id="diaV">60px</b></label>
+  <div id="trajOpts" class="hidden">
+    <label class="row">軌跡
+      <select id="path">
+        <option value="lissa">李沙育曲線</option>
+        <option value="circle">圓形</option>
+        <option value="snake">蛇行掃描</option>
+        <option value="rect">矩形邊框</option>
+        <option value="spiral">螺旋</option>
+      </select></label>
+    <label class="row">球速 <input type="range" id="spd" min="0.4" max="2" step="0.1" value="1"><b id="spdV">1.0×</b></label>
+  </div>
+  <label class="row"><span>顯示我的視線點</span><input type="checkbox" id="showGaze" checked></label>
+  <label class="row"><span>左右眼對調（眨眼方向相反時勾選）</span><input type="checkbox" id="swap"></label>
+  <div class="btns">
+    <button class="primary" id="startBtn">開始校正</button>
+    <button id="fsBtn">全螢幕</button>
+    <button class="danger" id="clearBtn">清除校正</button>
+  </div>
+  <details open><summary>說明</summary>
+    <div style="font-size:12.5px;color:var(--dim)">
+      臉對著鏡頭、光線充足，頭部可小幅自然移動。<br>
+      <b>定點</b>：盯著圓球，程式採樣→驗證誤差→追加新點，直到平均誤差落在<b>球半徑內</b>。<br>
+      <b>軌跡</b>：視線跟著圓球走，持續學習，直到近 5 秒平均誤差落在球半徑內。<br>
+      模擬模式（無鏡頭）：網址加 <code>?mock</code>，滑鼠=視線。
+    </div>
+  </details>
+</div>
+
+<div id="previewHost"></div>
+<div class="msg" id="msg">按「開始校正」。</div>
+
+<div class="overlay" id="startOverlay">
+  <div class="card">
+    <h1>眼動校正</h1>
+    <p>需要使用網路攝影機。影像只在你的瀏覽器內處理，不會上傳。</p>
+    <p id="loadMsg"></p>
+    <button class="primary" id="goBtn" style="font-size:18px;padding:10px 28px">啟動相機</button>
+  </div>
+</div>
+<script type="module" src="js/calibrate.js"></script>
+</body>
+</html>

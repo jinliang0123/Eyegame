@@ -1,0 +1,73 @@
+:root {
+  --bg: #0b1020; --panel: rgba(18, 26, 48, .92); --line: #27345c; --text: #e6ebff; --dim: #8f9bc4;
+  --accent: #5b8cff; --good: #22c55e; --warn: #f59e0b; --bad: #ef4444;
+}
+* { box-sizing: border-box; }
+html, body { margin: 0; height: 100%; background: var(--bg); color: var(--text); font: 15px/1.5 system-ui, "Noto Sans TC", "PingFang TC", "Microsoft JhengHei", sans-serif; }
+a { color: var(--accent); }
+button, select { font: inherit; color: var(--text); background: #1c2748; border: 1px solid var(--line); border-radius: 8px; padding: 7px 14px; cursor: pointer; }
+button:hover, button.eye-hover { background: #26356a; border-color: var(--accent); }
+button.primary { background: var(--accent); border-color: var(--accent); color: #fff; font-weight: 600; }
+button.primary:hover { filter: brightness(1.1); }
+button.danger { border-color: #7a2d3a; }
+input[type=range] { width: 105px; accent-color: var(--accent); vertical-align: middle; }
+label.row { white-space: nowrap; display: flex; align-items: center; justify-content: space-between; gap: 10px; margin: 6px 0; font-size: 13px; color: var(--dim); }
+label.row b { color: var(--text); font-weight: 500; min-width: 44px; text-align: right; }
+
+/* 全螢幕舞台頁 */
+body.stage { overflow: hidden; }
+canvas#stage { position: fixed; inset: 0; width: 100%; height: 100%; display: block; background: radial-gradient(ellipse at center, #121a36 0%, #070b18 100%); }
+
+.panel { position: fixed; left: 12px; top: 12px; width: 270px; max-height: calc(100vh - 24px); overflow: auto; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 12px 14px; z-index: 20; backdrop-filter: blur(6px); }
+.panel h2 { margin: 0 0 8px; font-size: 16px; }
+.panel .btns { display: flex; flex-wrap: wrap; gap: 6px; margin-top: 10px; }
+.panel details summary { cursor: pointer; color: var(--dim); font-size: 13px; margin: 6px 0; }
+.panel.collapsed > :not(h2) { display: none; }
+.seg { display: flex; border: 1px solid var(--line); border-radius: 8px; overflow: hidden; margin: 6px 0; }
+.seg button { flex: 1; border: 0; border-radius: 0; background: transparent; padding: 6px 4px; }
+.seg button.on { background: var(--accent); color: #fff; }
+
+.preview { position: fixed; right: 12px; bottom: 12px; width: 200px; background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 6px; z-index: 20; font-size: 12px; }
+.pv-video { position: relative; width: 100%; aspect-ratio: 4/3; background: #000; border-radius: 6px; overflow: hidden; transform: scaleX(-1); }
+.pv-video video, .pv-video canvas { position: absolute; inset: 0; width: 100%; height: 100%; object-fit: cover; }
+.pv-bars label { display: flex; align-items: center; gap: 6px; margin-top: 4px; color: var(--dim); }
+.bar { flex: 1; height: 8px; background: #0a0f20; border-radius: 4px; overflow: hidden; display: block; }
+.bar i { display: block; height: 100%; width: 0; background: #64748b; }
+.bar i.on { background: var(--warn); }
+.pv-state { margin-top: 4px; text-align: center; color: var(--dim); }
+.pv-state.ok { color: var(--good); } .pv-state.bad { color: var(--bad); }
+
+/* 校正誤差指示條 */
+.errbar { position: fixed; left: 50%; top: 14px; transform: translateX(-50%); width: min(560px, 56vw); background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 8px 14px 10px; z-index: 15; }
+.errbar .top { display: flex; justify-content: space-between; font-size: 13px; color: var(--dim); }
+.errbar .top b { color: var(--text); }
+.errbar .track { position: relative; height: 16px; background: #0a0f20; border-radius: 8px; margin-top: 6px; overflow: visible; }
+.errbar .fill { height: 100%; width: 0; border-radius: 8px; background: var(--bad); transition: width .15s, background .2s; }
+.errbar .tick { position: absolute; top: -4px; bottom: -4px; width: 3px; background: #fff; border-radius: 2px; box-shadow: 0 0 6px #fff; }
+.errbar .tick::after { content: "球半徑"; position: absolute; top: 24px; left: -16px; font-size: 11px; color: #fff; white-space: nowrap; }
+.errbar .scale { display: flex; justify-content: space-between; font-size: 11px; color: var(--dim); margin-top: 16px; }
+
+.msg { position: fixed; left: 50%; bottom: 24px; transform: translateX(-50%); background: var(--panel); border: 1px solid var(--line); border-radius: 10px; padding: 8px 18px; z-index: 15; max-width: 70vw; text-align: center; }
+.msg.good { border-color: var(--good); color: #bbf7d0; } .msg.bad { border-color: var(--bad); }
+
+.overlay { position: fixed; inset: 0; background: rgba(5, 8, 20, .82); display: flex; align-items: center; justify-content: center; z-index: 50; }
+.overlay .card { background: var(--panel); border: 1px solid var(--line); border-radius: 16px; padding: 26px 32px; max-width: 520px; text-align: center; }
+.overlay .card h1 { margin: 0 0 8px; font-size: 24px; }
+.overlay .card p { color: var(--dim); margin: 8px 0; }
+.overlay.hidden, .hidden { display: none !important; }
+
+/* 首頁 */
+.wrap { max-width: 1000px; margin: 0 auto; padding: 36px 20px 60px; }
+.wrap h1 { font-size: 34px; margin: 0; letter-spacing: 1px; }
+.wrap .sub { color: var(--dim); margin: 4px 0 28px; }
+.grid { display: grid; grid-template-columns: repeat(auto-fit, minmax(270px, 1fr)); gap: 18px; }
+.card-link { display: block; text-decoration: none; color: inherit; background: linear-gradient(160deg, #18234a, #101830); border: 1px solid var(--line); border-radius: 16px; padding: 20px; transition: transform .15s, border-color .15s; }
+.card-link:hover { transform: translateY(-3px); border-color: var(--accent); }
+.card-link .ico { font-size: 40px; }
+.card-link h3 { margin: 8px 0 4px; font-size: 20px; }
+.card-link p { margin: 0; color: var(--dim); font-size: 14px; }
+.card-link .tag { display: inline-block; margin-top: 10px; font-size: 12px; padding: 2px 10px; border-radius: 99px; background: #0a0f20; color: var(--dim); }
+.steps { background: #0f1630; border: 1px solid var(--line); border-radius: 12px; padding: 14px 20px; margin-top: 26px; color: var(--dim); }
+.steps li { margin: 4px 0; }
+.status-pill { display: inline-block; padding: 3px 12px; border-radius: 99px; font-size: 13px; background: #0a0f20; border: 1px solid var(--line); }
+.status-pill.ok { color: #bbf7d0; border-color: var(--good); } .status-pill.no { color: #fde68a; border-color: var(--warn); }

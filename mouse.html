@@ -1,0 +1,70 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>眼控滑鼠</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { overflow: hidden; }
+  .field { position: fixed; inset: 0; padding: 12px 12px 12px 300px; display: flex; flex-direction: column; gap: 14px; }
+  .tiles { display: grid; grid-template-columns: repeat(6, 1fr); gap: 10px; flex: 1; }
+  .tile { border-radius: 14px; border: 2px solid var(--line); background: #131c3a; display: flex; align-items: center; justify-content: center; font-size: 22px; user-select: none; transition: background .15s, transform .1s; }
+  .tile.eye-hover { background: #243a7a; border-color: var(--accent); }
+  .tile.l { background: #14532d; border-color: var(--good); transform: scale(.96); }
+  .tile.r { background: #1e3a8a; border-color: #60a5fa; transform: scale(.96); }
+  .scoreboard { display: flex; gap: 22px; align-items: center; background: var(--panel); border: 1px solid var(--line); border-radius: 12px; padding: 10px 18px; }
+  .scoreboard b { font-size: 22px; }
+  #log { flex: 1; text-align: right; font-size: 13px; color: var(--dim); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  #cursor { position: fixed; left: 0; top: 0; width: 34px; height: 34px; z-index: 9999; pointer-events: none; will-change: transform; filter: drop-shadow(0 2px 4px rgba(0,0,0,.6)); }
+  #cursor.frozen svg path { fill: #fbbf24; }
+  .ripple { position: fixed; z-index: 9998; width: 12px; height: 12px; margin: -6px 0 0 -6px; border-radius: 50%; pointer-events: none; animation: rip .55s ease-out forwards; }
+  .ripple.l { border: 3px solid #4ade80; } .ripple.r { border: 3px solid #60a5fa; }
+  @keyframes rip { to { transform: scale(7); opacity: 0; } }
+  #ctxmenu { position: fixed; z-index: 9000; background: #1c2748; border: 1px solid var(--accent); border-radius: 10px; padding: 6px; display: none; min-width: 150px; }
+  #ctxmenu div { padding: 8px 14px; border-radius: 6px; }
+  #ctxmenu div.eye-hover { background: var(--accent); }
+  .target { position: absolute; border-radius: 50%; background: radial-gradient(circle at 35% 35%, #fde68a, #f59e0b); box-shadow: 0 0 20px rgba(245,158,11,.6); }
+  #trail { position: fixed; inset: 0; pointer-events: none; z-index: 9990; }
+</style>
+</head>
+<body>
+<canvas id="trail"></canvas>
+<div class="panel" id="panel">
+  <h2>🖱️ 眼控滑鼠 <a href="index.html" style="font-size:12px;float:right">← 首頁</a></h2>
+  <div id="calState" class="status-pill">讀取校正中…</div>
+  <label class="row">平滑度 <input type="range" id="smooth" min="0" max="100" value="55"><b id="smoothV">55</b></label>
+  <label class="row">移動增益 <input type="range" id="gain" min="100" max="160" value="110"><b id="gainV">1.10</b></label>
+  <label class="row">眨眼時間 <input type="range" id="wink" min="80" max="400" step="10" value="140"><b id="winkV">140ms</b></label>
+  <label class="row">點擊冷卻 <input type="range" id="cool" min="200" max="1500" step="50" value="600"><b id="coolV">600ms</b></label>
+  <label class="row"><span>顯示軌跡</span><input type="checkbox" id="trailOn"></label>
+  <label class="row"><span>左右眼對調</span><input type="checkbox" id="swap"></label>
+  <div class="btns">
+    <button class="primary" id="startBtn">啟動相機</button>
+    <button id="fsBtn">全螢幕</button>
+    <button id="targetBtn">打靶練習</button>
+    <a href="calibrate.html"><button>重新校正</button></a>
+  </div>
+  <details open><summary>操作</summary>
+    <div style="font-size:12.5px;color:var(--dim)">
+      視線移動虛擬游標；<b style="color:#4ade80">閉左眼(約0.15秒)＝左鍵</b>、<b style="color:#60a5fa">閉右眼＝右鍵</b>。眨眼時游標會凍結（變黃）不亂跳。<br>
+      瀏覽器無法控制作業系統的真實滑鼠，這是頁面內的虛擬游標，可操作此頁所有按鈕與方塊。<br>
+      模擬模式：網址加 <code>?mock</code>（Z=左鍵 X=右鍵）。
+    </div>
+  </details>
+</div>
+
+<div class="field" id="field">
+  <div class="scoreboard">
+    <span>左鍵 <b id="cL">0</b></span><span>右鍵 <b id="cR">0</b></span><span>命中靶 <b id="cT">0</b></span>
+    <div id="log">尚未啟動</div>
+  </div>
+  <div class="tiles" id="tiles"></div>
+</div>
+<div id="ctxmenu"><div>📋 複製</div><div>📌 釘選</div><div>🗑️ 刪除</div></div>
+<svg id="cursor" viewBox="0 0 24 24"><path d="M3 2 L3 19 L8 14.5 L11.5 22 L14.5 20.7 L11.2 13.4 L18 13 Z" fill="#fff" stroke="#000" stroke-width="1.4" stroke-linejoin="round"/></svg>
+<div id="previewHost"></div>
+<div class="msg hidden" id="msg"></div>
+<script type="module" src="js/mouse.js"></script>
+</body>
+</html>

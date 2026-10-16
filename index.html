@@ -1,0 +1,47 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>眼動控制遊戲集錦</title>
+<link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+<div class="wrap">
+  <h1>👁️ 眼動控制遊戲集錦</h1>
+  <p class="sub">只需要網路攝影機。影像在瀏覽器內本機處理，不會上傳。 <span id="calState" class="status-pill">讀取中…</span></p>
+  <div class="grid">
+    <a class="card-link" href="calibrate.html">
+      <div class="ico">🎯</div><h3>1. 眼動校正</h3>
+      <p>盯著可調直徑的圓球（定點或沿軌跡移動），程式即時估計視線並自動追加校正點，直到誤差落入球半徑內。附校正誤差指示條。</p>
+      <span class="tag">請先做這個</span>
+    </a>
+    <a class="card-link" href="mouse.html">
+      <div class="ico">🖱️</div><h3>2. 眼控滑鼠</h3>
+      <p>視線移動游標，眨左眼＝左鍵、眨右眼＝右鍵。含懸停、點擊、右鍵選單與打靶練習，可驗證控制效果。</p>
+      <span class="tag">頁面內虛擬游標</span>
+    </a>
+    <a class="card-link" href="race.html">
+      <div class="ico">🏎️</div><h3>3. 眼控賽車</h3>
+      <p>偽 3D 公路賽車：看左右控制車子，眨眼發射飛彈，炸掉前方的車輛、石頭與樹木。</p>
+      <span class="tag">眨眼開火</span>
+    </a>
+  </div>
+  <ol class="steps">
+    <li>使用 <b>Chrome / Edge</b>，網址必須是 <code>https://</code> 或 <code>localhost</code>（相機權限要求）。</li>
+    <li>臉部正對鏡頭、光線均勻（避免背光），螢幕全螢幕效果最好。</li>
+    <li>先到「眼動校正」完成校正（結果存在瀏覽器），再玩其他兩款。</li>
+    <li>沒有鏡頭想先試玩？在任一頁網址後加 <code>?mock</code>：滑鼠＝視線，<kbd>Z</kbd>/<kbd>X</kbd>/空白＝左眼/右眼/雙眼眨。<a href="calibrate.html?mock">校正</a>｜<a href="mouse.html?mock">滑鼠</a>｜<a href="race.html?mock">賽車</a></li>
+  </ol>
+</div>
+<script type="module">
+  import { GazeModel } from './js/gaze.js';
+  const m = GazeModel.load(), el = document.getElementById('calState');
+  if (m.ready()) {
+    const a = m.accuracy;
+    el.textContent = a ? `已校正・誤差 ${a.err.toFixed(0)}px / 球半徑 ${a.radius.toFixed(0)}px` : '已有校正資料';
+    el.classList.add(a && a.ok ? 'ok' : 'no');
+  } else { el.textContent = '尚未校正'; el.classList.add('no'); }
+</script>
+</body>
+</html>

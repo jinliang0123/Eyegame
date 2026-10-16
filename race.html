@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+<meta charset="utf-8">
+<meta name="viewport" content="width=device-width, initial-scale=1">
+<title>眼控賽車</title>
+<link rel="stylesheet" href="css/style.css">
+<style>
+  body { overflow: hidden; background: #000; }
+  canvas#game { position: fixed; inset: 0; width: 100%; height: 100%; display: block; }
+  .topbar { position: fixed; right: 12px; top: 12px; z-index: 30; display: flex; gap: 8px; }
+  .overlay .card .kbd { display: inline-block; padding: 0 8px; border: 1px solid var(--line); border-radius: 5px; font-size: 13px; }
+  .overlay .card ul { text-align: left; color: var(--dim); font-size: 14px; padding-left: 20px; }
+  .overlay .card .score { font-size: 38px; font-weight: 700; color: #fde68a; }
+</style>
+</head>
+<body>
+<canvas id="game"></canvas>
+<div class="topbar">
+  <button id="muteBtn">🔊</button>
+  <button id="pauseBtn">暫停 (P)</button>
+  <button id="fsBtn">全螢幕</button>
+  <a href="index.html"><button>首頁</button></a>
+</div>
+<div id="previewHost"></div>
+
+<div class="overlay" id="menu">
+  <div class="card">
+    <h1>🏎️ 眼控賽車</h1>
+    <ul>
+      <li><b>看左邊 / 右邊</b>，賽車就往那邊移動（只能左右）。</li>
+      <li><b>眨眼</b>發射飛彈，炸掉前方的車輛、石頭、樹木。</li>
+      <li>撞到障礙會損血（3 條命）；飛彈有彈藥上限，會自動補充。</li>
+      <li>鍵盤備援：<span class="kbd">←</span><span class="kbd">→</span> 轉向、<span class="kbd">空白</span> 發射、<span class="kbd">P</span> 暫停。</li>
+    </ul>
+    <p id="calInfo"></p>
+    <p id="loadMsg"></p>
+    <button class="primary" id="goBtn" style="font-size:18px;padding:10px 28px">啟動相機並開始</button>
+    <button id="kbBtn" style="margin-left:8px">只用鍵盤試玩</button>
+  </div>
+</div>
+<div class="overlay hidden" id="over">
+  <div class="card">
+    <h1>遊戲結束</h1>
+    <div class="score" id="finalScore">0</div>
+    <p id="finalInfo"></p>
+    <button class="primary" id="againBtn" style="font-size:18px;padding:10px 28px">再來一局</button>
+  </div>
+</div>
+<script type="module" src="js/race.js"></script>
+</body>
+</html>
